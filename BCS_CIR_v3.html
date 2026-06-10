@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCS Client Intelligence Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f14;
+    --paper: #f8f4ee;
+    --gold: #c9a84c;
+    --gold-light: #e8d08a;
+    --gold-pale: rgba(201,168,76,0.08);
+    --red-bcs: #cc2200;
+    --red-dark: #8a1500;
+    --muted: #6b6557;
+    --border: #ddd5c0;
+    --card: #ffffff;
+    --shadow: 0 4px 24px rgba(0,0,0,0.07);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─────────────────────────────── */
+  .header {
+    background: var(--ink);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--red-bcs), var(--gold), var(--red-bcs));
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 48px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+  .header-left {}
+  .brand-eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+  .header h1 em {
+    color: var(--gold);
+    font-style: normal;
+  }
+  .header-meta {
+    margin-top: 10px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #6a6058;
+    text-transform: uppercase;
+  }
+  .header-divider {
+    width: 2px;
+    height: 80px;
+    background: linear-gradient(180deg, transparent, var(--gold), transparent);
+    margin: 0 40px;
+    flex-shrink: 0;
+  }
+  .header-logo {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .header-logo img {
+    width: 90px;
+    height: auto;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+  }
+  .header-logo-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #6a6058;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* ─── CONTAINER ──────────────────────────── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ─── CARD with watermark ─────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 40px 44px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(180deg, var(--red-bcs), var(--gold));
+  }
+  /* Watermark */
+  .card::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 380px; height: 260px;
+    background-image: url('data:image/png;base64,LOGOPLACEHOLDER');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .card > * { position: relative; z-index: 1; }
+
+  /* ─── SECTION LABELS ─────────────────────── */
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .step-num {
+    width: 28px; height: 28px;
+    background: var(--ink);
+    color: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 28px;
+    margin-left: 38px;
+  }
+
+  /* ─── FORM ELEMENTS ──────────────────────── */
+  .params-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .field-group { display: flex; flex-direction: column; gap: 7px; }
+  .field-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .field-sub { font-size: 11px; color: #9a9080; line-height: 1.4; }
+  .badge-pts {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--gold);
+    font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 2px;
+    letter-spacing: 0.5px;
+  }
+  .badge-flag {
+    display: inline-block;
+    background: #fff0ee;
+    color: var(--red-bcs);
+    border: 1px solid #f5c0b0;
+    font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .styled-select {
+    appearance: none;
+    background: #faf8f5;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 11px 40px 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px; font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    width: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .styled-select:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+  .styled-input {
+    background: #faf8f5;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    color: var(--ink); width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .styled-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+  .score-display { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 500; }
+  .score-val { color: var(--gold); font-weight: 700; font-size: 13px; }
+
+  /* ─── DIVIDER ─────────────────────────────── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  /* ─── RISK WARNING ───────────────────────── */
+  .risk-warning {
+    display: none;
+    background: #2a0808;
+    color: #f09090;
+    border-left: 4px solid var(--red-bcs);
+    padding: 14px 20px;
+    font-size: 13px; font-weight: 500;
+    border-radius: 0 3px 3px 0;
+    margin-top: 16px; line-height: 1.6;
+  }
+  .risk-warning.visible { display: block; }
+  .risk-warning strong { color: #ffb0b0; }
+
+  /* ─── SCORE BAR ──────────────────────────── */
+  .score-bar-wrap { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--border); }
+  .score-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+  .score-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px; font-weight: 900;
+    color: var(--ink); line-height: 1;
+  }
+  .score-big span { font-size: 22px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+  .score-bar-track { background: #ede8dc; height: 6px; border-radius: 3px; overflow: hidden; margin: 6px 0; }
+  .score-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red-bcs), var(--gold));
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 0%;
+  }
+  .score-bar-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+
+  /* ─── GENERATE BUTTON ────────────────────── */
+  .btn-generate {
+    display: block; width: 100%;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 17px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 32px; border-radius: 3px;
+    position: relative;
+  }
+  .btn-generate::after {
+    content: '→';
+    position: absolute; right: 24px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+  }
+  .btn-generate:hover { background: #1f1530; }
+
+  /* ─── REPORT OUTPUT ──────────────────────── */
+  #report-output { display: none; }
+
+  .report-header {
+    background: var(--ink);
+    padding: 0;
+    border-radius: 3px 3px 0 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .report-header::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--red-bcs), var(--gold), var(--red-bcs));
+  }
+  .report-header-inner {
+    padding: 36px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .report-header-left {}
+  .r-label { font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
+  .r-client { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+  .r-sub { font-size: 12px; color: #6a6058; }
+  .report-header-logo { flex-shrink: 0; }
+  .report-header-logo img { width: 70px; height: auto; filter: drop-shadow(0 1px 4px rgba(0,0,0,0.5)); }
+
+  /* VERDICT */
+  .verdict-banner {
+    padding: 24px 48px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .verdict-icon { font-size: 36px; flex-shrink: 0; }
+  .verdict-status { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 900; }
+  .verdict-tagline { font-size: 12px; margin-top: 4px; opacity: 0.85; font-weight: 500; }
+
+  .verdict-YES-Strategic { background: #0d3a1f; color: #7ecfa0; }
+  .verdict-YES-Preferred { background: #0d3320; color: #5dbf80; }
+  .verdict-YES-Selective { background: #1a3a1a; color: #90c97a; }
+  .verdict-REVIEW { background: #3a2600; color: #f0a830; }
+  .verdict-NO-Reject { background: #3a0a0a; color: #f07070; }
+  .verdict-NO-Commercial { background: #3a1500; color: #f09050; }
+  .verdict-NO-Strategic { background: #2a1f3a; color: #b09ada; }
+  .verdict-NO-History { background: #1a0a2a; color: #d0a0f0; }
+
+  /* REPORT BODY */
+  .report-body {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 3px 3px;
+  }
+  .report-section {
+    padding: 32px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .report-section:last-child { border-bottom: none; }
+  .report-sec-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; font-weight: 700; }
+
+  /* TABLE */
+  .score-table { width: 100%; border-collapse: collapse; }
+  .score-table th {
+    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+    padding: 8px 12px; text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  .score-table td {
+    padding: 11px 12px; font-size: 13.5px;
+    border-bottom: 1px solid #ede8dc;
+    vertical-align: middle;
+  }
+  .score-table tr:last-child td { border-bottom: none; }
+  .param-name { font-weight: 600; color: var(--ink); }
+  .param-class {
+    display: inline-block; padding: 3px 10px;
+    border-radius: 2px; font-size: 11.5px; font-weight: 600;
+  }
+  .class-High { background: #d4f0de; color: #1a6b3a; }
+  .class-Moderate { background: #fef3d0; color: #7a5a00; }
+  .class-Low { background: #fde0de; color: #8b2020; }
+  .class-None { background: #eee; color: #555; }
+  .param-score { font-weight: 700; font-size: 15px; color: var(--gold); text-align: right; }
+  .param-max { font-size: 11px; color: var(--muted); }
+  .score-table tfoot td { font-weight: 700; font-size: 15px; border-top: 2px solid var(--border); padding-top: 14px; }
+
+  /* FLAGS */
+  .flags-box {
+    background: #fff8f0;
+    border: 1px solid #f0d0a0;
+    border-left: 4px solid #d4700a;
+    padding: 18px 22px;
+    border-radius: 0 3px 3px 0;
+  }
+  .flags-box h4 { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #d4700a; margin-bottom: 12px; font-weight: 700; }
+  .flag-item { font-size: 13px; color: var(--ink); padding: 7px 0; border-bottom: 1px dashed #e8d0a0; display: flex; gap: 10px; line-height: 1.5; }
+  .flag-item:last-child { border-bottom: none; }
+
+  /* RULES */
+  .rule-item { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; border-bottom: 1px dashed var(--border); font-size: 13px; }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-bullet { font-size: 17px; flex-shrink: 0; }
+  .rule-text { color: var(--ink); line-height: 1.5; }
+
+  /* ANALYSIS */
+  .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .analysis-card {
+    background: #faf8f5;
+    border: 1px solid var(--border);
+    border-radius: 2px; padding: 18px;
+  }
+  .analysis-card h4 { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; font-weight: 700; }
+  .analysis-card p { font-size: 13.5px; color: var(--ink); line-height: 1.6; }
+
+  /* CONCLUSION */
+  .conclusion-box {
+    background: var(--ink);
+    color: #c8c0b0;
+    padding: 28px 36px;
+    border-left: 4px solid var(--gold);
+    border-radius: 0 3px 3px 0;
+  }
+  .conclusion-box h3 { font-family: 'Playfair Display', serif; font-size: 19px; margin-bottom: 14px; color: var(--gold-light); }
+  .conclusion-box p { font-size: 13.5px; line-height: 1.8; }
+  .conclusion-box strong { color: #fff; }
+
+  /* CONDITIONS */
+  .conditions-box {
+    background: #f0f5ff;
+    border: 1px solid #c0d0f0;
+    border-left: 4px solid #1a3a6b;
+    padding: 18px 22px;
+    margin-top: 18px;
+    border-radius: 0 3px 3px 0;
+  }
+  .conditions-box h4 { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #1a3a6b; margin-bottom: 10px; font-weight: 700; }
+  .conditions-box ul { padding-left: 18px; }
+  .conditions-box li { font-size: 13px; color: var(--ink); padding: 4px 0; line-height: 1.5; }
+
+  /* ─── PRINT BUTTON ───────────────────────── */
+  .print-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding: 0 48px 32px;
+    background: var(--card);
+    border-radius: 0 0 3px 3px;
+    border: 1px solid var(--border);
+    border-top: none;
+  }
+  .print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 11px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+  .print-btn:hover { background: var(--gold); color: var(--ink); }
+
+  @media print {
+    .header, .card, #report-output { display: block !important; }
+    .btn-generate, .print-btn, .print-row { display: none !important; }
+    body { background: white; }
+  }
+
+  @media (max-width: 768px) {
+    .params-grid { grid-template-columns: 1fr; }
+    .header-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .header-divider { display: none; }
+    .header h1 { font-size: 26px; }
+    .analysis-grid { grid-template-columns: 1fr; }
+    .report-section, .verdict-banner, .report-header-inner { padding: 20px; }
+    .card { padding: 24px 20px; }
+    .print-row { padding: 0 20px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="brand-eyebrow">Banthia Consultancy Services · Confidential</div>
+      <h1>Client <em>Decision</em><br>Intelligence Report</h1>
+      <div class="header-meta">Strategic Profiling & Classification System · v2.0</div>
+    </div>
+    <div class="header-divider"></div>
+    <div class="header-logo">
+      <img src="data:image/png;base64,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" alt="Banthia Logo" />
+      <div class="header-logo-label">BCS Framework</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- FORM CARD -->
+  <div class="card" id="form-section">
+
+    <!-- Step 01 -->
+    <div class="step-badge"><div class="step-num">1</div><div class="step-label">Client Identification</div></div>
+    <div class="section-title">Basic Details</div>
+    <div class="params-grid" style="margin-bottom:12px;">
+      <div class="field-group">
+        <label class="field-label">Client / Organisation Name</label>
+        <input type="text" id="client-name" class="styled-input" placeholder="Enter client name..." />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Date of Assessment</label>
+        <input type="date" id="assessment-date" class="styled-input" />
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- Step 02 -->
+    <div class="step-badge"><div class="step-num">2</div><div class="step-label">Client History & Relationship Context</div></div>
+    <div class="section-title">Engagement History</div>
+    <div class="params-grid" style="margin-bottom:12px;">
+      <div class="field-group">
+        <label class="field-label">A. Client Engagement History <span class="badge-flag">⚠ Critical</span></label>
+        <div class="field-sub">Nature of past relationship with BCS</div>
+        <select class="styled-select" id="h1" onchange="updateScore()">
+          <option value="">— Select History —</option>
+          <option value="new|neutral">New Client — No prior history with BCS</option>
+          <option value="active|positive">Active Client — Currently engaged / recently closed</option>
+          <option value="returning-good|positive">Returning (≤3 yrs gap) — Good track record</option>
+          <option value="returning-gap|caution">Returning (3–7 yr gap) — Gap needs explanation</option>
+          <option value="returning-long|negative">Returning (7+ yr gap) — Very long absence</option>
+          <option value="past-defaulter|negative">Past Defaulter — History of payment issues</option>
+          <option value="past-rejected|negative">Previously Rejected / Exited — BCS ended engagement</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">B. Past Projects with BCS</label>
+        <div class="field-sub">Total projects completed successfully</div>
+        <select class="styled-select" id="h2" onchange="updateScore()">
+          <option value="">— Select Count —</option>
+          <option value="none">None — First-time client</option>
+          <option value="1-2">1–2 Projects — Early relationship</option>
+          <option value="3-5">3–5 Projects — Established client</option>
+          <option value="6+">6+ Projects — Long-term partner</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="risk-warning" id="history-warning"></div>
+
+    <hr class="section-divider">
+
+    <!-- Step 03 -->
+    <div class="step-badge"><div class="step-num">3</div><div class="step-label">Profiling Parameters</div></div>
+    <div class="section-title">Client Scorecard</div>
+
+    <div class="params-grid">
+
+      <div class="field-group">
+        <label class="field-label">1. Project Size <span class="badge-pts">15 pts</span></label>
+        <div class="field-sub">Total project value / scope</div>
+        <select class="styled-select" id="p1" onchange="updateScore()">
+          <option value="">— Select —</option>
+          <option value="Low|5|<10 Cr">Low — &lt;10 Cr (5 pts)</option>
+          <option value="Moderate|10|10–25 Cr">Moderate — 10–25 Cr (10 pts)</option>
+          <option value="High|15|25–50 Cr">High — 25–50 Cr (15 pts)</option>
+          <option value="High|15|50–100 Cr">High — 50–100 Cr (15 pts)</option>
+          <option value="High|15|>100 Cr">High — &gt;100 Cr (15 pts)</option>
+        </select>
+        <div class="score-display" id="sc1">Score: <span class="score-val">—</span> / 15</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">2. Expected Revenue Potential <span class="badge-pts">20 pts</span></label>
+        <div class="field-sub">BCS revenue from this project (5-yr horizon)</div>
+        <select class="styled-select" id="p2" onchange="updateScore()">
+          <option value="">— Select —</option>
+          <option value="Low|5|0–5 Lakh">Low — 0–5 Lakh (5 pts)</option>
+          <option value="Moderate|10|5–15 Lakh">Moderate — 5–15 Lakh (10 pts)</option>
+          <option value="High|20|15–30 Lakh">High — 15–30 Lakh (20 pts)</option>
+          <option value="High|20|30–50 Lakh">High — 30–50 Lakh (20 pts)</option>
+          <option value="High|20|>50 Lakh">High — &gt;50 Lakh (20 pts)</option>
+        </select>
+        <div class="score-display" id="sc2">Score: <span class="score-val">—</span> / 20</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">3. Revenue Reasonability <span class="badge-pts">15 pts</span></label>
+        <div class="field-sub">Offer vs. effort — is the deal fair?</div>
+        <select class="styled-select" id="p3" onchange="updateScore()">
+          <option value="">— Select —</option>
+          <option value="High|15|High">High — Fair pricing, justified effort (15 pts)</option>
+          <option value="Moderate|10|Moderate">Moderate — Acceptable with conditions (10 pts)</option>
+          <option value="Low|5|Low">Low — Underpriced or unviable (5 pts)</option>
+        </select>
+        <div class="score-display" id="sc3">Score: <span class="score-val">—</span> / 15</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">4. Growth Orientation <span class="badge-pts">10 pts</span></label>
+        <div class="field-sub">Client's appetite for growth & scale</div>
+        <select class="styled-select" id="p4" onchange="updateScore()">
+          <option value="">— Select —</option>
+          <option value="High|10|High">High — Expansion mindset, future pipeline (10 pts)</option>
+          <option value="Moderate|7|Moderate">Moderate — Some growth intent (7 pts)</option>
+          <option value="Low|3|Low">Low — Stagnant, maintenance mode (3 pts)</option>
+        </select>
+        <div class="score-display" id="sc4">Score: <span class="score-val">—</span> / 10</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">5. Referral / Brand Value <span class="badge-pts">10 pts</span></label>
+        <div class="field-sub">Client's brand strength & referral potential</div>
+        <select class="styled-select" id="p5" onchange="updateScore()">
+          <option value="">— Select —</option>
+          <option value="High|10|High">High — Marquee brand, strong referral (10 pts)</option>
+          <option value="Moderate|7|Moderate">Moderate — Known in industry (7 pts)</option>
+          <option value="Low|3|Low">Low — Unknown, no referral value (3 pts)</option>
+        </select>
+        <div class="score-display" id="sc5">Score: <span class="score-val">—</span> / 10</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">6. Payment Discipline <span class="badge-pts">10 pts</span></label>
+        <div class="field-sub">Track record of timely payments</div>
+        <select class="styled-select" id="p6" onchange="updateScore()">
+          <option value="">— Select —</option>
+          <option value="High|10|High">High — Always on time, no disputes (10 pts)</option>
+          <option value="Moderate|5|Moderate">Moderate — Occasional delays (5 pts)</option>
+          <option value="Low|0|Low">Low — History of defaults / disputes (0 pts)</option>
+        </select>
+        <div class="score-display" id="sc6">Score: <span class="score-val">—</span> / 10</div>
+      </div>
+
+      <div class="field-group" style="grid-column: 1 / -1;">
+        <label class="field-label">7. Relationship, Value & Cultural Alignment <span class="badge-pts">20 pts</span></label>
+        <div class="field-sub">Do their values, working style, and culture align with BCS?</div>
+        <select class="styled-select" id="p7" onchange="updateScore()">
+          <option value="">— Select —</option>
+          <option value="High|20|High">High — Deep alignment, shared vision, respectful (20 pts)</option>
+          <option value="Moderate|10|Moderate">Moderate — Workable with selective concerns (10 pts)</option>
+          <option value="Low|0|Low">Low — Cultural mismatch, transactional, disrespectful (0 pts)</option>
+        </select>
+        <div class="score-display" id="sc7">Score: <span class="score-val">—</span> / 20</div>
+      </div>
+
+    </div>
+
+    <!-- SCORE BAR -->
+    <div class="score-bar-wrap">
+      <div class="score-row">
+        <div class="score-big" id="total-display">0 <span>/ 100</span></div>
+        <div style="font-size:13px; color:var(--muted); font-weight:500;">Total Score</div>
+      </div>
+      <div class="score-bar-track">
+        <div class="score-bar-fill" id="score-bar"></div>
+      </div>
+      <div class="score-bar-labels">
+        <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+      </div>
+    </div>
+
+    <div class="field-group" style="margin-top:28px;">
+      <label class="field-label">Additional Remarks <span style="font-weight:400; font-size:11px; text-transform:none; letter-spacing:0;">(Optional)</span></label>
+      <textarea id="remarks" class="styled-input" rows="3" placeholder="Any additional context — reason for gap, referral source, special circumstances..."></textarea>
+    </div>
+
+    <button class="btn-generate" onclick="generateReport()">Generate Client Intelligence Report</button>
+  </div>
+
+  <!-- ═══ REPORT OUTPUT ═══ -->
+  <div id="report-output">
+
+    <div class="report-header">
+      <div class="report-header-inner">
+        <div class="report-header-left">
+          <div class="r-label" id="r-date"></div>
+          <div class="r-client" id="r-client"></div>
+          <div class="r-sub">BCS Client Intelligence Assessment · Confidential</div>
+        </div>
+        <div class="report-header-logo">
+          <img src="data:image/png;base64,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" alt="Banthia" />
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict-banner" id="r-verdict-banner">
+      <div class="verdict-icon" id="r-verdict-icon"></div>
+      <div>
+        <div class="verdict-status" id="r-verdict-status"></div>
+        <div class="verdict-tagline" id="r-verdict-tagline"></div>
+      </div>
+    </div>
+
+    <div class="report-body">
+
+      <div class="report-section">
+        <div class="report-sec-label">Parameter Scorecard</div>
+        <table class="score-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Classification</th>
+              <th>Weight</th>
+              <th style="text-align:right;">Score</th>
+            </tr>
+          </thead>
+          <tbody id="r-score-rows"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" style="font-weight:700;">Total Score</td>
+              <td style="font-size:11px; color:var(--muted);">100 pts max</td>
+              <td style="text-align:right; color:var(--gold); font-family:'Playfair Display',serif; font-size:22px;" id="r-total-score"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="report-section">
+        <div class="report-sec-label">Client History & Risk Flags</div>
+        <div id="r-flags"></div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-sec-label">Decision Logic Applied</div>
+        <div id="r-rules"></div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-sec-label">Strengths & Risk Analysis</div>
+        <div class="analysis-grid" id="r-analysis"></div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-sec-label">Strategic Conclusion & Conditions</div>
+        <div class="conclusion-box" id="r-conclusion"></div>
+        <div id="r-conditions"></div>
+      </div>
+
+    </div>
+
+    <!-- PRINT BUTTON — bottom right -->
+    <div class="print-row">
+      <button class="print-btn" onclick="window.print()">🖨&nbsp;&nbsp;Print / Save as PDF</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const PARAMS = [
+  { id: 'p1', name: 'Project Size', max: 15, sc: 'sc1' },
+  { id: 'p2', name: 'Expected Revenue Potential', max: 20, sc: 'sc2' },
+  { id: 'p3', name: 'Revenue Reasonability', max: 15, sc: 'sc3' },
+  { id: 'p4', name: 'Growth Orientation', max: 10, sc: 'sc4' },
+  { id: 'p5', name: 'Referral / Brand Value', max: 10, sc: 'sc5' },
+  { id: 'p6', name: 'Payment Discipline', max: 10, sc: 'sc6' },
+  { id: 'p7', name: 'Relationship, Value & Cultural Alignment', max: 20, sc: 'sc7' }
+];
+
+document.getElementById('assessment-date').valueAsDate = new Date();
+
+function parseParam(id) {
+  const el = document.getElementById(id);
+  if (!el.value) return null;
+  const parts = el.value.split('|');
+  return { class: parts[0], score: parseInt(parts[1]), label: parts[2] };
+}
+
+function getHistoryData() {
+  return {
+    engagementType: document.getElementById('h1').value,
+    projectCount: document.getElementById('h2').value
+  };
+}
+
+function updateScore() {
+  let total = 0;
+  PARAMS.forEach(p => {
+    const val = parseParam(p.id);
+    const scEl = document.getElementById(p.sc);
+    if (val) {
+      scEl.innerHTML = 'Score: <span class="score-val">' + val.score + '</span> / ' + p.max;
+      total += val.score;
+    } else {
+      scEl.innerHTML = 'Score: <span class="score-val">—</span> / ' + p.max;
+    }
+  });
+  document.getElementById('total-display').innerHTML = total + ' <span>/ 100</span>';
+  document.getElementById('score-bar').style.width = total + '%';
+
+  const h = getHistoryData();
+  const pay = parseParam('p6');
+  const rel = parseParam('p7');
+  const warningEl = document.getElementById('history-warning');
+  let warnings = [];
+
+  if (h.engagementType === 'past-rejected|negative')
+    warnings.push('🚫 <strong>Previously Rejected Client.</strong> BCS previously ended or declined this engagement. Strong justification required to re-engage.');
+  if (h.engagementType === 'past-defaulter|negative')
+    warnings.push('⛔ <strong>Past Defaulter flag active.</strong> This client has a history of payment issues. Engagement requires CEO-level approval with advance payment terms.');
+  if (h.engagementType === 'returning-long|negative')
+    warnings.push('⚠ <strong>7+ Year Gap Detected.</strong> Very long absence from BCS. Verify current business standing before proceeding.');
+  if (h.engagementType === 'returning-gap|caution')
+    warnings.push('⚠ <strong>3–7 Year Gap.</strong> Verify current business standing and reason for return before accepting.');
+  if (pay && pay.class === 'Low' && (h.engagementType === 'returning-long|negative' || h.engagementType === 'past-defaulter|negative'))
+    warnings.push('🚫 <strong>Critical Combination:</strong> Long gap + Low Payment Discipline = Automatic rejection territory.');
+  if (rel && rel.class === 'Low')
+    warnings.push('🚫 <strong>Cultural Misalignment (Low).</strong> Auto-rejection will be triggered regardless of score.');
+
+  if (warnings.length > 0) {
+    warningEl.innerHTML = warnings.join('<br><br>');
+    warningEl.classList.add('visible');
+  } else {
+    warningEl.classList.remove('visible');
+    warningEl.innerHTML = '';
+  }
+}
+
+function getVerdict(vals, total, history) {
+  const rel=vals[6], pay=vals[5], revR=vals[2], size=vals[0], revP=vals[1], growth=vals[3], brand=vals[4];
+  const eng = history.engagementType;
+  const projCount = history.projectCount;
+
+  if (eng === 'past-rejected|negative')
+    return { code:'NO-Reject', label:'NO – Re-engagement Not Permitted', icon:'✗', tagline:'Client was previously rejected/exited by BCS', css:'verdict-NO-Reject', rule:'Previously Rejected Client → Automatic Rejection', ruleEmoji:'🚫', hardBlock:true };
+  if (eng === 'past-defaulter|negative' && pay && pay.class === 'Low')
+    return { code:'NO-Reject', label:'NO – Chronic Defaulter', icon:'✗', tagline:'Past default history + Low payment discipline — irrecoverable risk', css:'verdict-NO-Reject', rule:'Past Defaulter + Low Payment Discipline → Absolute Rejection', ruleEmoji:'🚫', hardBlock:true };
+  if (eng === 'returning-long|negative' && pay && pay.class === 'Low')
+    return { code:'NO-History', label:'NO – Unacceptable Re-entry Risk', icon:'✗', tagline:'7+ year gap with low payment discipline — re-engagement unviable', css:'verdict-NO-History', rule:'7+ Year Absence + Low Payment → Re-entry Rejected', ruleEmoji:'⛔', hardBlock:true };
+  if (eng === 'returning-long|negative' && rel && rel.class === 'Low')
+    return { code:'NO-History', label:'NO – Re-entry Rejected', icon:'✗', tagline:'Long gap with cultural misalignment', css:'verdict-NO-History', rule:'7+ Year Absence + Low Relationship → Re-entry Rejected', ruleEmoji:'⛔', hardBlock:true };
+  if (rel && rel.class === 'Low')
+    return { code:'NO-Reject', label:'NO – Reject Client', icon:'✗', tagline:'Cultural & values misalignment — engagement not recommended', css:'verdict-NO-Reject', rule:'Relationship Alignment = Low → Automatic Rejection', ruleEmoji:'🚫', hardBlock:true };
+  if (pay && pay.class === 'Low' && revR && revR.class === 'Low')
+    return { code:'NO-Commercial', label:'NO – Commercial Risk', icon:'⚠', tagline:'Dual commercial failure: poor payment + unviable revenue', css:'verdict-NO-Commercial', rule:'Payment = Low AND Revenue Reasonability = Low → Commercial Risk', ruleEmoji:'💸', hardBlock:true };
+  if (size && size.class === 'Low' && revP && revP.class === 'Low' && growth && growth.class === 'Low')
+    return { code:'NO-Strategic', label:'NO – Low Strategic Fit', icon:'✗', tagline:'No scale, no revenue, no growth — does not meet BCS threshold', css:'verdict-NO-Strategic', rule:'Project Size + Revenue Potential + Growth = Low → No Strategic Fit', ruleEmoji:'📉', hardBlock:true };
+
+  if (eng === 'past-defaulter|negative')
+    return { code:'REVIEW', label:'MANAGEMENT REVIEW — CEO Required', icon:'⊛', tagline:'Past defaulter with improved profile — mandatory CEO sign-off', css:'verdict-REVIEW', rule:'Past Defaulter History → CEO Approval Mandatory', ruleEmoji:'🔍', hardBlock:false };
+  if (eng === 'returning-long|negative')
+    return { code:'REVIEW', label:'MANAGEMENT REVIEW — Verify Re-entry', icon:'⊛', tagline:'7+ year absence — business standing must be verified', css:'verdict-REVIEW', rule:'7+ Year Gap → Verification & Senior Approval Required', ruleEmoji:'🔍', hardBlock:false };
+  if (eng === 'returning-gap|caution' && pay && pay.class === 'Low')
+    return { code:'REVIEW', label:'MANAGEMENT REVIEW — Gap + Payment Risk', icon:'⊛', tagline:'Mid-term gap + payment concerns — structured evaluation required', css:'verdict-REVIEW', rule:'3–7 Year Gap + Low Payment → Management Review', ruleEmoji:'🔍', hardBlock:false };
+  if (revP && revP.class === 'High' && rel && rel.class === 'Moderate')
+    return { code:'REVIEW', label:'MANAGEMENT REVIEW', icon:'⊛', tagline:'High revenue potential with moderate alignment — senior decision needed', css:'verdict-REVIEW', rule:'Revenue Potential = High + Relationship = Moderate → Management Review', ruleEmoji:'🔍', hardBlock:false };
+  if (brand && brand.class === 'High' && revP && revP.class === 'Moderate')
+    return { code:'REVIEW', label:'MANAGEMENT REVIEW', icon:'⊛', tagline:'High brand value but moderate commercial viability', css:'verdict-REVIEW', rule:'High Brand + Moderate Revenue → Management Review', ruleEmoji:'🔍', hardBlock:false };
+  if (rel && rel.class === 'Moderate' && total >= 60)
+    return { code:'REVIEW', label:'MANAGEMENT REVIEW', icon:'⊛', tagline:'Mixed relationship profile with adequate score — leadership input required', css:'verdict-REVIEW', rule:'Moderate Relationship Alignment + Score ≥60 → Management Review', ruleEmoji:'🔍', hardBlock:false };
+
+  if (projCount === '6+' && (eng === 'active|positive' || eng === 'returning-good|positive') && rel && rel.class === 'High')
+    return { code:'YES-Strategic', label:'YES – Strategic Partner', icon:'★', tagline:'Proven long-term partnership — highest engagement priority', css:'verdict-YES-Strategic', rule:'6+ Projects + Active/Good History + High Relationship → Strategic Partner', ruleEmoji:'🏆', hardBlock:false };
+  if (growth && growth.class === 'High' && rel && rel.class === 'High' && pay && pay.class === 'High')
+    return { code:'YES-Strategic', label:'YES – Strategic Client', icon:'★', tagline:'Highest strategic fit — long-term relationship priority for BCS', css:'verdict-YES-Strategic', rule:'High Growth + High Relationship + High Payment → Strategic Client', ruleEmoji:'🏆', hardBlock:false };
+  if (brand && brand.class === 'High' && rel && rel.class === 'High')
+    return { code:'YES-Strategic', label:'YES – Strategic Client', icon:'★', tagline:'Strong brand + professional relationship — strategic partnership', css:'verdict-YES-Strategic', rule:'High Brand + High Relationship → Strategic Client', ruleEmoji:'🏆', hardBlock:false };
+  if (revR && revR.class === 'High' && pay && pay.class === 'High')
+    return { code:'YES-Preferred', label:'YES – Preferred Client', icon:'✓', tagline:'Strong commercial and operational alignment with BCS', css:'verdict-YES-Preferred', rule:'High Revenue Reasonability + High Payment → Preferred Client', ruleEmoji:'✅', hardBlock:false };
+
+  return { code:'YES-Selective', label:'YES – Selective Client', icon:'◎', tagline:'Acceptable engagement on selective, project-specific basis', css:'verdict-YES-Selective', rule:'All other acceptable cases → Selective Engagement', ruleEmoji:'📋', hardBlock:false };
+}
+
+function getFlags(history, vals, verdict) {
+  const eng = history.engagementType;
+  const pay=vals[5], rel=vals[6], revR=vals[2];
+  const flags = [];
+  if (eng === 'past-defaulter|negative') flags.push({ icon:'🚨', severity:'Critical', text:'Past Defaulter — Client has a recorded history of payment default or disputes with BCS. Advance payment or strong security required if proceeding.' });
+  if (eng === 'past-rejected|negative') flags.push({ icon:'🚨', severity:'Critical', text:'Previously Rejected Client — BCS previously declined or exited this engagement. Re-engagement requires documented management decision.' });
+  if (eng === 'returning-long|negative') flags.push({ icon:'⚠️', severity:'High', text:'7+ Year Absence — Verify current business status, ownership, financial health, and reason for re-approach.' });
+  if (eng === 'returning-gap|caution') flags.push({ icon:'⚠️', severity:'Medium', text:'3–7 Year Gap — Obtain updated KYC, check business continuity, and document reason for return.' });
+  if (pay && pay.class === 'Low') flags.push({ icon:'💸', severity:'Critical', text:'Low Payment Discipline — Do not proceed without advance payment clause in the engagement letter.' });
+  if (rel && rel.class === 'Moderate' && verdict.code !== 'NO-Reject') flags.push({ icon:'🤝', severity:'Medium', text:'Moderate Cultural Alignment — Establish clear working norms, SLAs, and escalation paths before engagement.' });
+  if (revR && revR.class === 'Low') flags.push({ icon:'📊', severity:'High', text:'Low Revenue Reasonability — Negotiate fee revision or reduce scope before accepting.' });
+  return flags;
+}
+
+function getConditions(verdict, history, vals) {
+  const eng = history.engagementType;
+  const pay = vals[5];
+  const conditions = [];
+  if (verdict.code === 'REVIEW') { conditions.push('Obtain explicit written approval from CEO / senior management before proceeding'); conditions.push('Document the rationale for acceptance/rejection in the client file'); }
+  if (eng === 'returning-long|negative' || eng === 'returning-gap|caution') { conditions.push('Conduct fresh KYC and business verification — do not rely on old records'); conditions.push('Obtain written explanation from the client on reason for the gap'); conditions.push('Review current financial standing before committing BCS resources'); }
+  if (eng === 'past-defaulter|negative' && verdict.code !== 'NO-Reject') { conditions.push('100% advance payment mandatory — no work begins without full payment received'); conditions.push('Senior leadership sign-off required before contract is issued'); conditions.push('Short engagement scope preferred — avoid multi-year commitments'); }
+  if (pay && pay.class === 'Low' && verdict.code !== 'NO-Reject' && verdict.code !== 'NO-Commercial') { conditions.push('Advance payment clause to be included in engagement letter'); conditions.push('Monthly billing cycle — no deferred payment beyond 15 days'); }
+  if (verdict.code === 'YES-Selective') { conditions.push('Define clear project scope and deliverables upfront — avoid scope creep'); conditions.push('Re-evaluate client for future projects based on actual experience'); }
+  return conditions;
+}
+
+function getConclusionText(verdict, clientName, vals, total, history) {
+  const eng = history.engagementType;
+  const engLabel = { 'new|neutral':'a first-time client','active|positive':'an active BCS client','returning-good|positive':'a returning client with good track record','returning-gap|caution':'a client returning after a 3–7 year gap','returning-long|negative':'a client returning after 7+ years of absence','past-defaulter|negative':'a client with a recorded payment default history','past-rejected|negative':'a client previously rejected/exited by BCS' }[eng] || 'a client under evaluation';
+  if (verdict.code === 'NO-Reject' && eng === 'past-rejected|negative') return '<h3>Conclusion: Re-engagement Not Permitted</h3><p><strong>' + clientName + '</strong> is a previously rejected or exited client. BCS made a deliberate decision to end this relationship. Without a documented management reversal and strong new justification, this engagement cannot proceed. <strong>Do not re-engage without explicit CEO directive.</strong></p>';
+  if (verdict.code === 'NO-Reject') return '<h3>Conclusion: Reject Engagement</h3><p><strong>' + clientName + '</strong> scored <strong>' + total + '/100</strong>. An auto-rejection condition has been triggered. BCS\'s premium positioning is built on cultural integrity and commercial viability — one or both have failed this assessment. <strong>This engagement is not recommended.</strong></p>';
+  if (verdict.code === 'NO-History') return '<h3>Conclusion: Re-entry Risk — Do Not Engage</h3><p><strong>' + clientName + '</strong> is ' + engLabel + '. The combination of a very long absence with material commercial risk flags makes this re-engagement unacceptable. <strong>Request the client to resolve identified gaps and re-submit for evaluation.</strong></p>';
+  if (verdict.code === 'NO-Commercial') return '<h3>Conclusion: Commercial Risk — Do Not Engage</h3><p><strong>' + clientName + '</strong> scored <strong>' + total + '/100</strong>. Dual commercial risk is triggered: Low Payment Discipline combined with Low Revenue Reasonability. <strong>Decline to protect BCS\'s cash flow and billing integrity.</strong></p>';
+  if (verdict.code === 'NO-Strategic') return '<h3>Conclusion: Below Strategic Threshold</h3><p><strong>' + clientName + '</strong> scored <strong>' + total + '/100</strong>. Project Size, Revenue Potential, and Growth Orientation are all Low. Committing BCS resources here is a direct opportunity cost. <strong>Decline or redirect to lower-tier service options.</strong></p>';
+  if (verdict.code === 'REVIEW' && eng === 'past-defaulter|negative') return '<h3>Conclusion: CEO Approval Required Before Any Action</h3><p><strong>' + clientName + '</strong> is ' + engLabel + '. While the current profile scores <strong>' + total + '/100</strong>, past default history cannot be ignored. <strong>No engagement letter, proposal, or resource commitment until CEO provides written sign-off.</strong> Strict advance payment terms must apply if approved.</p>';
+  if (verdict.code === 'REVIEW' && eng === 'returning-long|negative') return '<h3>Conclusion: Verify Before Deciding</h3><p><strong>' + clientName + '</strong> is ' + engLabel + '. A 7+ year absence means BCS must treat this as a new client evaluation entirely. The score of <strong>' + total + '/100</strong> is promising, but business continuity, ownership, and financial standing must be independently verified. <strong>Do not proceed until verification is complete and senior review is done.</strong></p>';
+  if (verdict.code === 'REVIEW') return '<h3>Conclusion: Senior Management Decision Required</h3><p><strong>' + clientName + '</strong> scored <strong>' + total + '/100</strong>. The profile presents a mixed picture — opportunity exists but concerns need addressing. <strong>Senior leadership input is required before committing. Do not proceed without explicit approval.</strong></p>';
+  if (verdict.code === 'YES-Strategic') return '<h3>Conclusion: Prioritise for Strategic Partnership</h3><p><strong>' + clientName + '</strong> achieved <strong>' + total + '/100</strong>, qualifying as a <strong>Strategic Client</strong> — the highest BCS category. Exceptional alignment across culture, commercial viability, and growth potential. BCS should <strong>allocate senior talent and invest in long-term partnership development.</strong></p>';
+  if (verdict.code === 'YES-Preferred') return '<h3>Conclusion: Proceed with Preferred Engagement</h3><p><strong>' + clientName + '</strong> scored <strong>' + total + '/100</strong> as a <strong>Preferred Client</strong>. Strong commercial alignment makes this a reliable, profitable engagement. <strong>Proceed with confidence</strong> — establish clear commercial terms and nurture for repeat business.</p>';
+  return '<h3>Conclusion: Accept on Selective Basis</h3><p><strong>' + clientName + '</strong> scored <strong>' + total + '/100</strong>, meeting BCS\'s minimum thresholds. Proceed with <strong>clear project scope, documented deliverables, and firm commercial terms.</strong> Monitor relationship quality and re-evaluate based on actual experience.</p>';
+}
+
+function generateReport() {
+  const clientName = document.getElementById('client-name').value.trim() || 'Unnamed Client';
+  const dateVal = document.getElementById('assessment-date').value;
+  const remarks = document.getElementById('remarks').value.trim();
+  const history = getHistoryData();
+
+  if (!history.engagementType || !history.projectCount) { alert('Please fill Client History (both fields in Step 2) before generating.'); return; }
+  const vals = PARAMS.map(p => parseParam(p.id));
+  if (!vals.every(v => v !== null)) { alert('Please fill all 7 profiling parameters before generating.'); return; }
+
+  const total = vals.reduce((s, v) => s + v.score, 0);
+  const verdict = getVerdict(vals, total, history);
+  const flags = getFlags(history, vals, verdict);
+  const conditions = getConditions(verdict, history, vals);
+
+  const dateObj = dateVal ? new Date(dateVal + 'T00:00:00') : new Date();
+  const dateStr = 'Assessment Date: ' + dateObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  document.getElementById('r-date').textContent = dateStr;
+  document.getElementById('r-client').textContent = clientName;
+
+  const banner = document.getElementById('r-verdict-banner');
+  banner.className = 'verdict-banner ' + verdict.css;
+  document.getElementById('r-verdict-icon').textContent = verdict.icon;
+  document.getElementById('r-verdict-status').textContent = verdict.label;
+  document.getElementById('r-verdict-tagline').textContent = verdict.tagline;
+
+  const historyLabels = { 'new|neutral':'New Client — No prior history','active|positive':'Active Client — Currently engaged','returning-good|positive':'Returning (≤3 yrs) — Good track record','returning-gap|caution':'Returning (3–7 yr gap)','returning-long|negative':'Returning (7+ yr gap) — Long absence','past-defaulter|negative':'Past Defaulter — Payment risk','past-rejected|negative':'Previously Rejected by BCS' };
+  const projCountLabels = { 'none':'None','1-2':'1–2 Projects','3-5':'3–5 Projects','6+':'6+ Projects' };
+  const histClass = (history.engagementType.includes('negative') ? 'Low' : history.engagementType.includes('caution') ? 'Moderate' : 'High');
+  const weights = [15,20,15,10,10,10,20];
+
+  let rowsHTML = '<tr><td class="param-name">Client Engagement History</td><td><span class="param-class class-' + histClass + '">' + (historyLabels[history.engagementType]||history.engagementType) + '</span></td><td style="font-size:11px;color:var(--muted);">Context</td><td class="param-score" style="font-size:13px;color:var(--muted);">—</td></tr><tr><td class="param-name">Past Projects with BCS</td><td><span class="param-class class-None">' + (projCountLabels[history.projectCount]||'—') + '</span></td><td style="font-size:11px;color:var(--muted);">Context</td><td class="param-score" style="font-size:13px;color:var(--muted);">—</td></tr>';
+  vals.forEach((v, i) => {
+    rowsHTML += '<tr><td class="param-name">' + PARAMS[i].name + '</td><td><span class="param-class class-' + v.class + '">' + v.class + ' — ' + v.label + '</span></td><td class="param-max">' + weights[i] + ' pts</td><td class="param-score">' + v.score + '</td></tr>';
+  });
+  document.getElementById('r-score-rows').innerHTML = rowsHTML;
+  document.getElementById('r-total-score').textContent = total + ' / 100';
+
+  let flagsHTML = '';
+  if (flags.length > 0) {
+    flagsHTML = '<div class="flags-box"><h4>⚑ Active Risk Flags</h4>';
+    flags.forEach(f => { flagsHTML += '<div class="flag-item"><span>' + f.icon + '</span><span><strong>[' + f.severity + ']</strong> ' + f.text + '</span></div>'; });
+    flagsHTML += '</div>';
+  } else { flagsHTML = '<p style="font-size:13.5px;color:var(--muted);font-style:italic;">No risk flags identified for this client profile.</p>'; }
+  document.getElementById('r-flags').innerHTML = flagsHTML;
+
+  let rulesHTML = '<div class="rule-item"><span class="rule-bullet">' + verdict.ruleEmoji + '</span><span class="rule-text"><strong>Primary Rule:</strong> ' + verdict.rule + '</span></div><div class="rule-item"><span class="rule-bullet">📊</span><span class="rule-text"><strong>Overall Score:</strong> ' + total + '/100 — ' + (total>=75?'Strong Profile':total>=55?'Moderate Profile':total>=40?'Marginal Profile':'Weak Profile') + '</span></div>';
+  if (verdict.hardBlock) rulesHTML += '<div class="rule-item"><span class="rule-bullet">🔒</span><span class="rule-text"><strong>Hard Block Active:</strong> Score override not possible — this verdict is mandatory regardless of total score.</span></div>';
+  if (remarks) rulesHTML += '<div class="rule-item"><span class="rule-bullet">📝</span><span class="rule-text"><strong>Assessor Remarks:</strong> ' + remarks + '</span></div>';
+  document.getElementById('r-rules').innerHTML = rulesHTML;
+
+  const strengths = vals.filter(v => v.class==='High').map((v,i) => PARAMS[vals.indexOf(v)].name);
+  const risks = vals.filter(v => v.class==='Low').map((v,i) => PARAMS[vals.indexOf(v)].name);
+  const sNames = [], rNames = [];
+  vals.forEach((v,i) => { if(v.class==='High') sNames.push(PARAMS[i].name); if(v.class==='Low') rNames.push(PARAMS[i].name); });
+  document.getElementById('r-analysis').innerHTML = '<div class="analysis-card"><h4>Strengths (High Parameters)</h4><p>' + (sNames.length>0?sNames.join(', '):'No High-rated parameters identified') + '</p></div><div class="analysis-card"><h4>Risk Areas (Low Parameters)</h4><p>' + (rNames.length>0?rNames.join(', '):'No significant risk areas identified') + '</p></div><div class="analysis-card"><h4>Score Composition</h4><p>High: ' + vals.filter(v=>v.class==='High').length + '/7 &nbsp;|&nbsp; Moderate: ' + vals.filter(v=>v.class==='Moderate').length + '/7 &nbsp;|&nbsp; Low: ' + vals.filter(v=>v.class==='Low').length + '/7</p></div><div class="analysis-card"><h4>BCS Positioning Fit</h4><p>' + (total>=80?'Excellent fit with BCS premium positioning':total>=65?'Good fit with minor considerations':total>=50?'Marginal fit — proceed with conditions':'Below BCS strategic threshold') + '</p></div>';
+
+  document.getElementById('r-conclusion').innerHTML = getConclusionText(verdict, clientName, vals, total, history);
+
+  let condHTML = '';
+  if (conditions.length > 0) {
+    condHTML = '<div class="conditions-box"><h4>📋 Engagement Conditions</h4><ul>';
+    conditions.forEach(c => condHTML += '<li>' + c + '</li>');
+    condHTML += '</ul></div>';
+  }
+  document.getElementById('r-conditions').innerHTML = condHTML;
+
+  document.getElementById('report-output').style.display = 'block';
+  setTimeout(() => document.getElementById('report-output').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+</script>
+</body>
+</html>
